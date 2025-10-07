@@ -1,0 +1,14 @@
+services:
+  app:
+    build: ./app
+    expose:
+      - "5000"
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/ca:/etc/nginx/ssl
+    depends_on:
+      - app
