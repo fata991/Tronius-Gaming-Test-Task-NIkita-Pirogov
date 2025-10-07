@@ -1,0 +1,22 @@
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python Virtual Environments
+.venv/
+venv/
+env/
+
+# IDE and editor directories
+.idea/
+.vscode/
+
+# Security - Ignore the entire certificate directory
+# Private keys should never be committed to version control.
+nginx/ca/
+
+# Operating System files
+.DS_Store
+Thumbs.db
