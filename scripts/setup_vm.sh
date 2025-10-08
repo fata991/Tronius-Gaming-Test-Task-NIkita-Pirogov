@@ -12,7 +12,7 @@ echo "[*] Starting environment setup..."
 # --- 1. System Update and Prerequisite Installation ---
 echo "[+] Updating package list and installing prerequisites..."
 apt-get update
-apt-get install -y ca-certificates curl
+apt-get install -y ca-certificates curl make
 
 # --- 2. Install Docker Engine ---
 echo "[+] Installing Docker Engine..."
