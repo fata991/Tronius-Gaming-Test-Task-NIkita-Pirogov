@@ -32,7 +32,7 @@ Follow these instructions on a clean machine to get the application running.
 
 1.  **Clone the Repository**
     ```bash
-    git clone [https://github.com/fata991/Tronius-Gaming-Test-Task-NIkita-Pirogov.git](https://github.com/fata991/Tronius-Gaming-Test-Task-NIkita-Pirogov.git)
+    git clone [https://github.com/fata991/Tronius-Gaming-Test-Task-NIkita-Pirogov.git]
     cd Tronius-Gaming-Test-Task-NIkita-Pirogov/
     ```
 
