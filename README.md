@@ -1,54 +1,66 @@
-Web Server Deployment Project
-A complete, automated workflow for deploying a secure, containerized web application using Docker, Nginx, and Python. This project is designed to be fully repeatable on a fresh Ubuntu machine.
+# Automated Web Server Deployment
 
-Architecture
-This project uses a standard reverse proxy pattern. An Nginx container acts as the secure, public-facing entry point, terminating SSL and forwarding traffic to a backend Flask application container running on a private Docker network.
+A complete and repeatable workflow for deploying a secure, containerized web application using Docker, Nginx, and Python on a fresh Ubuntu server.
 
-+-----------------+      +------------------------+      +---------------------+
-|   User/Client   |----->|     Nginx Container    |----->|   Flask App         |
-| (HTTPS Request) |      | (Port 443, SSL/TLS)    |      |   Container         |
-+-----------------+      +------------------------+      +---------------------+
+---
 
-Prerequisites
-A Linux-based host machine (tested on Ubuntu 24.04).
+## Key Features
 
-git to clone the repository.
+* **Fully Automated Setup**: A single script installs all necessary dependencies, including Docker and Docker Compose.
+* **Containerized Environment**: Docker ensures that the application and its environment are isolated, consistent, and portable.
+* **Secure by Design**: Nginx is used as a reverse proxy to handle incoming HTTPS traffic, terminating SSL/TLS before forwarding requests to the application.
+* **Simplified Management**: A `Makefile` provides simple, one-word commands like `deploy`, `test`, and `clean` to manage the entire application lifecycle.
 
-Quick Start & Usage
-Follow these steps in order on a new, clean machine.
+---
 
-1. Clone the Repository
-git clone [https://github.com/fata991/Tronius-Gaming-Test-Task-NIkita-Pirogov.git](https://github.com/fata991/Tronius-Gaming-Test-Task-NIkita-Pirogov.git)
-cd Tronius-Gaming-Test-Task-NIkita-Pirogov/
+## Architecture
 
-2. Run the Environment Setup Script
-This script must be run once to install all dependencies, including Docker, Docker Compose, and make.
+At its core, the project employs a standard reverse proxy pattern. An Nginx container serves as the secure, public-facing entry point, while the Flask application runs in a separate container on a private Docker network.
 
-# This command requires administrator privileges
-sudo ./scripts/setup_vm.sh
+---
 
-IMPORTANT: After the script completes, you must log out and log back in for the user permission changes to take effect.
+## Getting Started
 
-3. Use make to Manage the Application
-After re-logging in and navigating back to the project directory, use the following commands:
+Follow these instructions on a clean machine to get the application running.
 
-Build the Docker Images (Optional)
-This step is automatically included in make deploy, but can be run separately.
+### Prerequisites
 
-make build
+* A Linux-based host machine (tested on **Ubuntu 24.04**).
+* **Git** for cloning the repository.
 
-Deploy the Application
-This command generates certificates, builds images (if needed), and starts the application.
+### Installation and Deployment
 
-make deploy
+1.  **Clone the Repository**
+    ```bash
+    git clone [https://github.com/fata991/Tronius-Gaming-Test-Task-NIkita-Pirogov.git](https://github.com/fata991/Tronius-Gaming-Test-Task-NIkita-Pirogov.git)
+    cd Tronius-Gaming-Test-Task-NIkita-Pirogov/
+    ```
 
-Test the Deployment
-Run the automated test suite to verify everything is working correctly.
+2.  **Run the Setup Script**
+    This one-time script installs all system dependencies.
+    ```bash
+    # This command requires administrator privileges
+    sudo ./scripts/setup_vm.sh
+    ```
+    > **IMPORTANT**: You must **log out and log back in** for the system changes to take effect before proceeding to the next step.
 
-make test
+3.  **Deploy the Application**
+    After logging back in, navigate to the project directory and run the deploy command. This will generate certificates, build the Docker images, and start the services.
+    ```bash
+    make deploy
+    ```
 
-Clean the Environment
-Stop and remove all containers, images, and certificates.
+---
 
-make clean
+## Usage
 
+The `Makefile` simplifies all common operations.
+
+* `make deploy`
+    * Builds and starts the Nginx and Flask containers. The primary command to run the application.
+* `make test`
+    * Runs an automated test suite to verify that the deployment is successful and the services are responsive.
+* `make clean`
+    * Stops and removes all containers, images, and certificates associated with the project.
+* `make build`
+    * Builds the Docker images without starting the containers. This is automatically part of `make deploy`.
