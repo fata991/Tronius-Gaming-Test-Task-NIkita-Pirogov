@@ -1,0 +1,92 @@
+# This is a GitHub Actions workflow file. It defines a set of automated checks
+# that will run every time code is pushed to the repository.
+
+# 1. Give the workflow a name
+name: CI Checks
+
+# 2. Define the triggers for this workflow
+# It will run on every push to any branch, and on every pull request to the main branch.
+on: [push, pull_request]
+
+# 3. Define the jobs to run
+jobs:
+  build-and-lint:
+    # Use the latest version of Ubuntu as the runner environment
+    runs-on: ubuntu-latest
+
+    # Define the sequence of steps in this job
+    steps:
+      # Step to check out the repository's code so the workflow can access it
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step to set up the Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      # Step to install our linter dependency
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      # Step to run the linter on our Python scripts
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      # Step to set up Docker's modern builder, Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step to run our "compile" check: building the Docker images
+      - name: Build Docker images
+        run: docker-compose build
+```
+
+### Step 2: Commit and Push the Workflow File
+
+1.  **Create/Update the File:** Run the following command in your terminal to create the `checks.yml` file with the content above.
+    ```bash
+    # First, ensure the directories exist
+    mkdir -p .github/workflows
+    
+    # Now, create the file
+    cat << 'EOF' > .github/workflows/checks.yml
+    name: CI Checks
+    on: [push, pull_request]
+    jobs:
+      build-and-lint:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+          - name: Set up Python
+            uses: actions/setup-python@v5
+            with:
+              python-version: '3.9'
+          - name: Install dependencies
+            run: |
+              python -m pip install --upgrade pip
+              pip install flake8
+          - name: Lint with flake8
+            run: |
+              flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+              flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          - name: Set up Docker Buildx
+            uses: docker/setup-buildx-action@v3
+          - name: Build Docker images
+            run: docker-compose build
+    EOF
+    ```
+
+2.  **Commit and Push:** Save this file to your repository.
+    ```bash
+    git add .github/workflows/checks.yml
+    git commit -m "ci: Add GitHub Actions workflow for linting and building"
+    git push
