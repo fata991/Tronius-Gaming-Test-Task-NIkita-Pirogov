@@ -5,7 +5,6 @@
 name: CI Checks
 
 # 2. Define the triggers for this workflow
-# It will run on every push to any branch, and on every pull request to the main branch.
 on: [push, pull_request]
 
 # 3. Define the jobs to run
@@ -27,10 +26,18 @@ jobs:
           python-version: '3.9'
 
       # Step to install our linter dependency
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install flake8
+
+      # --- THIS IS THE NEW STEP ---
+      # Step to install Docker Compose, which is not available by default
+      - name: Install Docker Compose
+        run: |
+          COMPOSE_VERSION="1.29.2" # Use a specific, known-stable version
+          sudo curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
 
       # Step to run the linter on our Python scripts
       - name: Lint with flake8
@@ -47,46 +54,3 @@ jobs:
       # Step to run our "compile" check: building the Docker images
       - name: Build Docker images
         run: docker-compose build
-```
-
-### Step 2: Commit and Push the Workflow File
-
-1.  **Create/Update the File:** Run the following command in your terminal to create the `checks.yml` file with the content above.
-    ```bash
-    # First, ensure the directories exist
-    mkdir -p .github/workflows
-    
-    # Now, create the file
-    cat << 'EOF' > .github/workflows/checks.yml
-    name: CI Checks
-    on: [push, pull_request]
-    jobs:
-      build-and-lint:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v4
-          - name: Set up Python
-            uses: actions/setup-python@v5
-            with:
-              python-version: '3.9'
-          - name: Install dependencies
-            run: |
-              python -m pip install --upgrade pip
-              pip install flake8
-          - name: Lint with flake8
-            run: |
-              flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-              flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-          - name: Set up Docker Buildx
-            uses: docker/setup-buildx-action@v3
-          - name: Build Docker images
-            run: docker-compose build
-    EOF
-    ```
-
-2.  **Commit and Push:** Save this file to your repository.
-    ```bash
-    git add .github/workflows/checks.yml
-    git commit -m "ci: Add GitHub Actions workflow for linting and building"
-    git push
